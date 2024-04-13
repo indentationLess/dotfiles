@@ -1,0 +1,11 @@
+ForceUpdate
+[Main]
+ICM=CopyFile -> [Ret: 1] [ErrCode: 0]
+CMDEFICM=CopyFile -> [Ret: 1] [ErrCode: 0]
+ASUS_sRGB.icm=CopyFile -> [Ret: 1] [ErrCode: 0]
+ASUS_DCIP3.icm=CopyFile -> [Ret: 1] [ErrCode: 0]
+ASUS_DisplayP3.icm=CopyFile -> [Ret: 1] [ErrCode: 0]
+AssociateResult=AssociateColorProfileWithDevice -> 0
+AssociateResult1=call InstallColorProfile
+AssociateResult2=InstallColorProfile -> 1
+AssociateResult3=AssociateColorProfileWithDevice 2 -> 1
