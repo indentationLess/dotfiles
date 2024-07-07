@@ -2,21 +2,22 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+#if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+#fi
 
 #Exports 
 export ZSH=$HOME/.oh-my-zsh
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+# export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export PATH="/home/aradia/codeshit/cSHIT/downboy/gbdk/bin:$PATH"
 export PATH="/home/aradia/.local/bin:$PATH"
 export PATH="$PATH:$HOME/.spicetify"
 export GOPATH=$HOME/go/
 export PATH="/home/aradia/docker:$PATH"
+export PATH="/home/euphrosyne/.cargo/bin:$PATH"
 
 # OMZ
-ZSH_THEME='powerlevel10k/powerlevel10k'
+# ZSH_THEME='powerlevel10k/powerlevel10k'
 plugins=(
   git
   history-substring-search
@@ -27,11 +28,12 @@ plugins=(
 )
 source $ZSH/oh-my-zsh.sh
 # Aliases
+alias wifi="nmcli d wifi list"
+alias network="sudo service network-manager restart" 
 alias cat='bat -p'
 alias cd='z'
+alias neofetch="fastfetch"
 alias cls='clear'
-alias py='python3'
-alias pip='pip3'
 alias open='xdg-open'
 alias cp='printf "\033[1;32m" && cp -rv'
 alias mv='printf "\033[1;34m" && mv -v'
@@ -61,6 +63,8 @@ alias icat="kitty +kitten icat"
 alias q="exit"
 alias startvenv="python -m venv env && source env/bin/activate"
 alias entervenv="source env/bin/activate"
+alias handbook="xdg-open ~/Downloads/CSAIhandbook.pdf"
+alias linktree="xdg-open https://docs.google.com/document/d/1IlIX8J6xjgVI03sMuwIm44rPhp05rssUvdkezlNfJNg/edit"
 # --- YT-DL aliases
 alias yta-best="yt-dlp --extract-audio --audio-format best "
 alias yta-flac="yt-dlp --extract-audio --audio-format flac "
@@ -79,9 +83,8 @@ autoload -U compinit
 zstyle ':completion:*' menu select
 zmodload zsh/complist
 compinit
-_comp_options+=(globdots)
+comp_options+=(globdots)
 eval "$(zoxide init zsh)"
-
 # Binds
 bindkey "^[[3~" delete-char
 bindkey "^A" beginning-of-line
@@ -89,8 +92,7 @@ bindkey "^Q" end-of-line
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+eval "$(oh-my-posh init zsh --config $HOME/.config/omp/bubbles.toml)"
 
 # Convert video to gif file.
 # Usage: video2gif video_file (scale) (fps)
@@ -107,7 +109,9 @@ video2mp3() {
 testg++(){
   g++ "${1}" && ./a.out 
 }
-
+webm2mp4(){
+ffmpeg -fflags +genpts -i "${1}" -r 24 "${1}.mp4"
+}
 #go stuff
 export GOROOT=/usr/lib/go
 export GOPATH=$HOME/go

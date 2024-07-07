@@ -3,3 +3,23 @@
 	name = euphrosyne
 [init]
 	defaultBranch = main
+[color]
+	ui = auto
+[pull]
+  rebase = false
+[help]
+  autocorrect = 1
+[alias]
+  recent = "!git checkout $(git for-each-ref --count=100 --sort=-committerdate refs/heads/ --format='%(refname:short)' | fzf)"
+  update = "pull origin main --rebase"
+  fpush = "push --force-with-lease"
+  fp = "push --force-with-lease"
+  pf = "push --force-with-lease"
+  s = "status -s"
+  pop = "!git log -1 --pretty=%B | cat | yank; git reset --soft HEAD^"
+  ri = "pull origin main --rebase=interactive"
+  obliterate = "!git add -A && git stash && git stash drop"
+
+
+[url "ssh://git@github.com/"]
+   insteadOf = https://github.com/
