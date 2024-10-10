@@ -9,12 +9,10 @@
 #Exports 
 export ZSH=$HOME/.oh-my-zsh
 # export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-export PATH="/home/aradia/codeshit/cSHIT/downboy/gbdk/bin:$PATH"
-export PATH="/home/aradia/.local/bin:$PATH"
 export PATH="$PATH:$HOME/.spicetify"
 export GOPATH=$HOME/go/
-export PATH="/home/aradia/docker:$PATH"
 export PATH="/home/euphrosyne/.cargo/bin:$PATH"
+export PATH="$PATH:/opt/mssql-tools/bin"
 
 # OMZ
 # ZSH_THEME='powerlevel10k/powerlevel10k'
@@ -65,6 +63,7 @@ alias startvenv="python -m venv env && source env/bin/activate"
 alias entervenv="source env/bin/activate"
 alias handbook="xdg-open ~/Downloads/CSAIhandbook.pdf"
 alias linktree="xdg-open https://docs.google.com/document/d/1IlIX8J6xjgVI03sMuwIm44rPhp05rssUvdkezlNfJNg/edit"
+
 # --- YT-DL aliases
 alias yta-best="yt-dlp --extract-audio --audio-format best "
 alias yta-flac="yt-dlp --extract-audio --audio-format flac "
@@ -93,13 +92,19 @@ bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
 eval "$(oh-my-posh init zsh --config $HOME/.config/omp/bubbles.toml)"
-
 # Convert video to gif file.
 # Usage: video2gif video_file (scale) (fps)
 video2gif() {
   ffmpeg -y -i "${1}" -vf fps=${3:-10},scale=${2:-320}:-1:flags=lanczos,palettegen "${1}.png"
   ffmpeg -i "${1}" -i "${1}.png" -filter_complex "fps=${3:-10},scale=${2:-320}:-1:flags=lanczos[x];[x][1:v]paletteuse" "${1}".gif
   rm "${1}.png"
+}
+MKV2mp4() {
+    for file in *.mkv; do
+        if [ -f "$file" ]; then
+            ffmpeg -i "$file" -codec copy "${file%.mkv}.mp4"
+        fi
+    done
 }
 
 video2mp3() {
@@ -112,17 +117,47 @@ testg++(){
 webm2mp4(){
 ffmpeg -fflags +genpts -i "${1}" -r 24 "${1}.mp4"
 }
+
+mssql_init() {
+    local MSSQL_SA_PASSWORD="YourPassword123"
+    local MSSQL_CONTAINER_NAME="sqlserver"
+    
+    # Check if Docker is running
+    if ! systemctl is-active --quiet docker; then
+        echo "starting Docker service..."
+        sudo systemctl start docker
+    fi
+
+    if sudo docker ps -a | grep -q "$MSSQL_CONTAINER_NAME"; then
+        echo "MSSQL container already exists. Starting it..."
+        sudo docker start "$MSSQL_CONTAINER_NAME"
+    else
+        echo "Creating and running MSSQL Docker container..."
+        sudo docker run -e "ACCEPT_EULA=Y" \
+                        -e "SA_PASSWORD=$MSSQL_SA_PASSWORD" \
+                        -p 1433:1433 \
+                        --name "$MSSQL_CONTAINER_NAME" \
+                        -d mcr.microsoft.com/mssql/server:2022-latest
+    fi
+
+    echo "MSSQL is running"
+    if ls *.csproj > /dev/null 2>&1; then
+        dotnet add package System.Data.SqlClient
+        echo "SQL Client package added to the current project."
+    else
+        echo "No .csproj file found in the current directory. Make sure you're in a valid C# project folder."
+    fi
+}
+
+
 #go stuff
 export GOROOT=/usr/lib/go
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin
 # pnpm
-export PNPM_HOME="/home/aradia/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
-# bun completions
-[ -s "/home/aradia/.bun/_bun" ] && source "/home/aradia/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -131,3 +166,5 @@ export PATH=$PATH:/home/euphrosyne/.spicetify
 
 # Created by `pipx` on 2024-04-11 07:17:36
 export PATH="$PATH:/home/euphrosyne/.local/bin"
+# Add .NET Core SDK tools
+export PATH="$PATH:/home/euphrosyne/.dotnet/tools"
